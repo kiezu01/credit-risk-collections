@@ -9,7 +9,7 @@ warehouse, an industry-style application scorecard, an out-of-time collections m
 A/B test that would prove it works in production.
 
 **[Live dashboard](https://credit-risk-collections-ngoyjwsjci4vcdtrqbqnzp.streamlit.app/)** ·
-[Methodology](docs/methodology.md)
+[Methodology](docs/methodology.md) · English / Tiếng Việt (switch at the top right of the dashboard)
 
 ## Key results
 
