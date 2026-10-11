@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data (Home Credit competition data must not be redistributed)
+data/*
+!data/raw/
+data/raw/*
+!data/raw/.gitkeep
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+logs/
+
+# Local
+.env
+.pytest_cache/
+.ruff_cache/
+dbt/.user.yml

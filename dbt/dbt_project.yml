@@ -1,0 +1,30 @@
+name: credit_risk_collections
+version: "1.0.0"
+config-version: 2
+profile: credit_risk_collections
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "logs"]
+
+vars:
+  # Folder holding the Home Credit CSV files, relative to the repo root (dbt is run from there).
+  raw_dir: "{{ env_var('CRC_RAW_DIR', 'data/raw') }}"
+  # A payment counts as complete when it covers this share of the instalment amount.
+  paid_threshold: 0.95
+  # An instalment enters the collections queue if still not paid this many days after its due date
+  # (days past due, DPD). Short grace periods filter out payments that are only a few days late.
+  collections_entry_dpd: 5
+  # Outcome: "cured" if paid within this many days after the due date; otherwise it rolls to DPD 30+.
+  cure_window_days: 30
+
+models:
+  credit_risk_collections:
+    staging:
+      +materialized: table
+    intermediate:
+      +materialized: table
+    marts:
+      +materialized: table

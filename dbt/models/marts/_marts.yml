@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: mart_customer_features
+    description: One row per labelled application, used to train the application scorecard.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: target_default
+        data_tests: [not_null]
+  - name: mart_collections_events
+    description: >
+      One row per collections entry (instalment still not fully paid N days after its due date), with
+      point-in-time features and the label is_cured (paid within the cure window).
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: is_cured
+        data_tests: [not_null]
+      - name: shortfall_ratio
+        data_tests: [not_null]

@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_applications
+    description: Current loan applications (train + test).
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: target_default
+        description: 1 = client had payment difficulties on this loan (train only).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+  - name: stg_bureau
+    columns:
+      - name: bureau_credit_id
+        data_tests: [unique, not_null]
+  - name: stg_previous_applications
+    columns:
+      - name: prev_loan_id
+        data_tests: [unique, not_null]
+  - name: stg_installment_payments
+    columns:
+      - name: prev_loan_id
+        data_tests: [not_null]

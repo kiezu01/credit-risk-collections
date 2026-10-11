@@ -1,0 +1,66 @@
+-- Model-ready features for the application scorecard: one row per labelled application.
+select
+    a.customer_id,
+    a.target_default,
+    a.contract_type,
+    a.gender,
+    a.owns_car,
+    a.owns_realty,
+    a.children_cnt,
+    a.family_members_cnt,
+    a.income_amt,
+    a.credit_amt,
+    a.annuity_amt,
+    a.goods_price_amt,
+    a.income_type,
+    a.education_type,
+    a.family_status,
+    a.housing_type,
+    a.occupation_type,
+    a.region_rating,
+    a.region_population_rel,
+    a.age_years,
+    a.employment_years,
+    a.is_unemployed_flag,
+    a.years_since_registration,
+    a.years_since_id_change,
+    a.days_since_phone_change,
+    a.own_car_age,
+    a.ext_source_1,
+    a.ext_source_2,
+    a.ext_source_3,
+    a.bureau_enquiries_year,
+    -- affordability ratios
+    a.credit_amt / nullif(a.income_amt, 0)          as credit_to_income_ratio,
+    a.annuity_amt / nullif(a.income_amt, 0)         as annuity_to_income_ratio,
+    a.credit_amt / nullif(a.goods_price_amt, 0)     as credit_to_goods_ratio,
+    a.credit_amt / nullif(a.annuity_amt, 0)         as implied_term_months,
+    -- credit bureau
+    b.bureau_credit_cnt,
+    b.bureau_active_cnt,
+    b.bureau_bad_debt_cnt,
+    b.bureau_overdue_amt,
+    b.bureau_max_overdue_amt,
+    b.bureau_max_days_overdue,
+    b.bureau_active_debt_amt,
+    b.bureau_debt_ratio,
+    b.bureau_days_since_last_credit,
+    b.bureau_prolong_cnt,
+    -- earlier applications
+    p.prev_app_cnt,
+    p.prev_approved_cnt,
+    p.prev_refused_rate,
+    p.prev_credit_to_applied_ratio,
+    p.prev_days_since_last_decision,
+    -- repayment behaviour on earlier loans
+    i.inst_cnt,
+    i.inst_delinquent_rate,
+    i.inst_avg_days_late,
+    i.inst_max_days_late,
+    i.inst_shortfall_ratio,
+    i.inst_uncured_cnt
+from {{ ref('stg_applications') }} as a
+left join {{ ref('int_bureau_by_customer') }} as b using (customer_id)
+left join {{ ref('int_previous_applications_by_customer') }} as p using (customer_id)
+left join {{ ref('int_payment_behaviour_by_customer') }} as i using (customer_id)
+where a.is_train

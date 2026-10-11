@@ -1,0 +1,6 @@
+relative_reduction,baseline_roll_rate,target_roll_rate,events_per_arm,days_needed
+0.05,0.0556,0.0528,104128,105
+0.1,0.0556,0.05,25401,26
+0.15,0.0556,0.0473,11008,12
+0.2,0.0556,0.0445,6033,7
+0.3,0.0556,0.0389,2539,3

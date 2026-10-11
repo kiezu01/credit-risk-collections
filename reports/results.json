@@ -1,0 +1,93 @@
+{
+  "scorecard": {
+    "train": {
+      "auc": 0.7624,
+      "gini": 0.5248,
+      "ks": 0.3914
+    },
+    "test": {
+      "auc": 0.7599,
+      "gini": 0.5197,
+      "ks": 0.389
+    },
+    "psi_train_vs_test": 0.0001,
+    "n_candidate_features": 53,
+    "n_selected_features": 33,
+    "default_rate_train": 0.0807
+  },
+  "scorecard_grade_edges": [
+    540.7,
+    557.1,
+    569.9,
+    582.4,
+    597.4
+  ],
+  "challenger": {
+    "test": {
+      "auc": 0.7797,
+      "gini": 0.5594,
+      "ks": 0.4185
+    },
+    "best_iteration": 628
+  },
+  "collections": {
+    "events_total": 231315,
+    "events_train": 161836,
+    "events_oot": 69479,
+    "oot_cut_due_day": -754.0,
+    "cure_rate_train": 0.9825,
+    "cure_rate_oot": 0.9787,
+    "oot": {
+      "auc": 0.891,
+      "gini": 0.7821,
+      "ks": 0.6757
+    },
+    "psi_p_cure_train_vs_oot": 0.3084,
+    "uncured_amt_captured_at_30pct": {
+      "random": 0.2739,
+      "largest_shortfall": 0.8762,
+      "lowest_cure_prob": 0.7414,
+      "expected_uncured_amt": 0.9476
+    }
+  },
+  "experiment": {
+    "assumed_events_per_day": 2000,
+    "design": [
+      {
+        "relative_reduction": 0.05,
+        "baseline_roll_rate": 0.0556,
+        "target_roll_rate": 0.0528,
+        "events_per_arm": 104128,
+        "days_needed": 105
+      },
+      {
+        "relative_reduction": 0.1,
+        "baseline_roll_rate": 0.0556,
+        "target_roll_rate": 0.05,
+        "events_per_arm": 25401,
+        "days_needed": 26
+      },
+      {
+        "relative_reduction": 0.15,
+        "baseline_roll_rate": 0.0556,
+        "target_roll_rate": 0.0473,
+        "events_per_arm": 11008,
+        "days_needed": 12
+      },
+      {
+        "relative_reduction": 0.2,
+        "baseline_roll_rate": 0.0556,
+        "target_roll_rate": 0.0445,
+        "events_per_arm": 6033,
+        "days_needed": 7
+      },
+      {
+        "relative_reduction": 0.3,
+        "baseline_roll_rate": 0.0556,
+        "target_roll_rate": 0.0389,
+        "events_per_arm": 2539,
+        "days_needed": 3
+      }
+    ]
+  }
+}

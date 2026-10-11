@@ -1,0 +1,7 @@
+credit_risk_collections:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('CRC_DUCKDB_PATH', 'data/warehouse.duckdb') }}"
+      threads: 4
