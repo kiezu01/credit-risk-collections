@@ -85,7 +85,7 @@ def capture_figure(curve: pd.DataFrame, labels: dict, path):
     ax.axvline(30, ls=":", color=GREY)
     ax.set(
         xlabel="Share of each day's queue that collectors can work (%)",
-        ylabel="Share of uncured overdue amount reached (%)",
+        ylabel="Share of rolling overdue amount reached (%)",
         title="Who to call first: out-of-time validation",
     )
     ax.legend(frameon=False, fontsize=8, loc="lower right")
@@ -104,16 +104,16 @@ def shap_figure(importance: pd.DataFrame, title: str, path, top: int = 12):
 
 def calibration_figure(cal: pd.DataFrame, path):
     fig, ax = plt.subplots(figsize=(5, 4.5))
-    ax.plot(cal["predicted"], cal["observed"], marker="o", color=NAVY, lw=2)
+    ax.plot(1 - cal["predicted"], 1 - cal["observed"], marker="o", color=NAVY, lw=2)
     lo, hi = (
-        min(cal["predicted"].min(), cal["observed"].min()),
-        max(cal["predicted"].max(), cal["observed"].max()),
+        1 - max(cal["predicted"].max(), cal["observed"].max()),
+        1 - min(cal["predicted"].min(), cal["observed"].min()),
     )
     ax.plot([lo, hi], [lo, hi], ls="--", color=GREY)
     ax.set(
-        xlabel="Predicted cure probability",
-        ylabel="Observed cure rate",
-        title="Cure model calibration (out-of-time)",
+        xlabel="Predicted roll probability",
+        ylabel="Observed roll rate",
+        title="Roll-rate model calibration (out-of-time)",
     )
     _save(fig, path)
 
@@ -134,7 +134,7 @@ def write_all(
     capture_figure(col.capture_curve, labels, paths.figures / "collections_capture_curve.png")
     shap_figure(
         col.shap_importance,
-        "Cure model: top drivers (SHAP)",
+        "Roll-rate model: top drivers (SHAP)",
         paths.figures / "collections_shap.png",
     )
     calibration_figure(col.calibration, paths.figures / "collections_calibration.png")

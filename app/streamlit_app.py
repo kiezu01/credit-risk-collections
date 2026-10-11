@@ -24,9 +24,9 @@ REPORTS = Path(os.environ.get("CRC_REPORTS_DIR", ROOT / "reports"))
 DATA = REPORTS / "app_data"
 NAVY, ORANGE, GREY = "#1F3864", "#E07B39", "#9AA5B1"
 STRATEGY_LABELS = {
-    "expected_uncured_amt": "Model x amount (expected uncured amount)",
+    "expected_uncured_amt": "Model x amount (expected rolling amount)",
     "largest_shortfall": "Largest overdue amount first",
-    "lowest_cure_prob": "Least likely to self-cure first",
+    "lowest_cure_prob": "Highest roll probability first",
     "random": "Random order",
 }
 STRATEGY_COLORS = {
@@ -59,17 +59,17 @@ sc, ch, col = R["scorecard"], R["challenger"], R["collections"]
 st.title("Credit Risk & Collections Analytics")
 st.caption(
     "Home Credit Default Risk data · dbt + DuckDB warehouse · WoE scorecard · LightGBM + SHAP · "
-    "out-of-time cure model · A/B test design. "
+    "out-of-time roll-rate model · A/B test design. "
     "[Code on GitHub](https://github.com/kiezu01/credit-risk-collections)"
 )
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Scorecard Gini (test)", f"{sc['test']['gini']:.3f}")
 c2.metric("LightGBM Gini (test)", f"{ch['test']['gini']:.3f}")
-c3.metric("Cure model AUC (out-of-time)", f"{col['oot']['auc']:.3f}")
+c3.metric("Roll-rate model AUC (out-of-time)", f"{col['oot']['auc']:.3f}")
 cap = col["uncured_amt_captured_at_30pct"]
 c4.metric(
-    "Uncured amount reached at 30% capacity",
+    "Rolling amount reached at 30% capacity",
     f"{cap['expected_uncured_amt']:.0%}",
     f"{(cap['expected_uncured_amt'] - cap['random']) * 100:+.0f} pp vs random",
 )
@@ -192,7 +192,7 @@ with tab_col:
     fig.add_vline(x=capacity, line_dash="dot", line_color=GREY)
     fig.update_layout(
         xaxis_title="Share of queue worked",
-        yaxis_title="Uncured amount reached",
+        yaxis_title="Share of rolling amount reached",
         xaxis_tickformat=".0%",
         yaxis_tickformat=".0%",
         legend=dict(orientation="h"),
@@ -204,23 +204,23 @@ with tab_col:
         cal = load("collections_calibration.csv")
         fig = go.Figure()
         fig.add_scatter(
-            x=cal["predicted"],
-            y=cal["observed"],
+            x=1 - cal["predicted"],
+            y=1 - cal["observed"],
             mode="lines+markers",
             line=dict(color=NAVY),
             name="Model",
         )
         lo, hi = (
-            cal[["predicted", "observed"]].min().min(),
-            cal[["predicted", "observed"]].max().max(),
+            1 - cal[["predicted", "observed"]].max().max(),
+            1 - cal[["predicted", "observed"]].min().min(),
         )
         fig.add_scatter(
             x=[lo, hi], y=[lo, hi], mode="lines", line=dict(dash="dash", color=GREY), name="Perfect"
         )
         fig.update_layout(
             title="Calibration (out-of-time)",
-            xaxis_title="Predicted cure probability",
-            yaxis_title="Observed cure rate",
+            xaxis_title="Predicted roll probability",
+            yaxis_title="Observed roll rate",
         )
         st.plotly_chart(fig, use_container_width=True)
     with right:
@@ -231,12 +231,12 @@ with tab_col:
             y="feature",
             orientation="h",
             color_discrete_sequence=[NAVY],
-            title="Cure model drivers (mean |SHAP|)",
+            title="Roll-rate model drivers (mean |SHAP|)",
         )
         st.plotly_chart(fig, use_container_width=True)
     st.caption(
         f"{col['events_total']:,} delinquency events · trained on {col['events_train']:,}, "
-        f"validated on the latest {col['events_oot']:,} · cure rate {col['cure_rate_oot']:.1%} "
+        f"validated on the latest {col['events_oot']:,} · roll rate {1 - col['cure_rate_oot']:.1%} "
         f"(validation) · PSI train vs. validation {col['psi_p_cure_train_vs_oot']:.3f}"
     )
 

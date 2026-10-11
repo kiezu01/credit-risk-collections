@@ -1,8 +1,8 @@
 """Early-delinquency collections: who will pay without help, and who to call first.
 
-1. Cure model: probability that an overdue instalment is paid within the cure
-   window, trained on older events and validated on the most recent ones
-   (out-of-time), the way it would be used in production.
+1. Roll-rate model: probability that an overdue instalment rolls to DPD 30+
+   (is not paid within the cure window), trained on older events and validated
+   on the most recent ones (out-of-time), the way it would be used in production.
 2. Prioritisation: collectors can only work part of each day's new delinquencies.
    We compare queue-ordering strategies by how much of the money that is NOT
    self-cured lands in the worked share of the queue. This uses observed outcomes
@@ -48,8 +48,8 @@ FEATURES = [
 STRATEGIES = {
     "random": "Random order (no prioritisation)",
     "largest_shortfall": "Largest overdue amount first (common rule of thumb)",
-    "lowest_cure_prob": "Least likely to self-cure first (model)",
-    "expected_uncured_amt": "Highest expected uncured amount first (model x amount)",
+    "lowest_cure_prob": "Highest roll probability first (model)",
+    "expected_uncured_amt": "Highest expected rolling amount first (model x amount)",
 }
 CAPACITIES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 

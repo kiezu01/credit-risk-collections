@@ -45,7 +45,7 @@ def train() -> dict:
         ch = challenger.train(train_df, test_df, sc.features, scorecard.TARGET)
         print("      test", ch.metrics["test"], flush=True)
 
-        print("[3/4] Collections cure model + prioritisation ...", flush=True)
+        print("[3/4] Collections roll-rate model + prioritisation ...", flush=True)
         col = collections_model.run(con)
         print("      oot", col.metrics["oot"], flush=True)
 

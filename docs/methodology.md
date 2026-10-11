@@ -27,7 +27,7 @@ default rate, and two point-in-time checks on the collections table.
 * **Challenger**: LightGBM on the same features, explained with SHAP. The gap between the two
   shows how much power the transparent model gives up.
 
-### 2. Collections: cure model and prioritisation
+### 2. Collections: roll-rate model and prioritisation
 * **Event (collections entry)** = an instalment with less than 95% of the amount paid **5 days
   after its due date (DPD 5)**. About half of all late instalments are paid within 3 days, so a
   short grace period keeps the queue to accounts a collector would actually work.

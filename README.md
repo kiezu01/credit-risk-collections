@@ -8,6 +8,9 @@ An end-to-end consumer-credit analytics project on the real
 warehouse, an industry-style application scorecard, an out-of-time collections model, and the
 A/B test that would prove it works in production.
 
+**[Live dashboard](https://credit-risk-collections-ngoyjwsjci4vcdtrqbqnzp.streamlit.app/)** ·
+[Methodology](docs/methodology.md)
+
 ## Key results
 
 ### 1. Application scorecard: who to lend to
