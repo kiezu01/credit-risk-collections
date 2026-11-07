@@ -49,6 +49,19 @@ default rate, and two point-in-time checks on the collections table.
 Ranking well does not prove that calling changes behaviour. The dashboard sizes the randomised
 test needed to measure the lift: two-sided z-test on two proportions, alpha 0.05, power 0.80.
 
+The unit of randomisation is the **prioritised** account: each day, the top 30% of new DPD 5
+entries by expected rolling amount are split at random between the new call strategy and the
+current process. The baseline roll rate (5.56%) is measured on those same accounts. Only that
+30% of daily volume can enrol, so the test duration is `2 x accounts per arm / (daily entries x
+0.30)`: at 2,000 entries a day, 600 accounts a day are eligible.
+
+| Relative reduction to detect | Roll rate | Accounts per arm | Days at 600 eligible a day |
+|---|---|---|---|
+| 30% | 5.56% → 3.89% | 2,539 | 9 |
+| 20% | 5.56% → 4.45% | 6,033 | 21 |
+| 15% | 5.56% → 4.73% | 11,008 | 37 |
+| 10% | 5.56% → 5.00% | 25,401 | 85 |
+
 ### Limitations
 * Home Credit `DAYS_*` fields are relative to each customer's own application date, not a
   calendar. "Out-of-time" therefore means "closer to the customer's latest application", and
@@ -56,4 +69,5 @@ test needed to measure the lift: two-sided z-test on two proportions, alpha 0.05
 * The data has no record of collection actions, so the true causal effect of a call cannot be
   estimated here. That is exactly what the A/B test is for.
 * The daily volume used to turn sample sizes into test duration is an assumption (2,000 new
-  delinquencies per day), editable in the dashboard.
+  delinquencies per day, of which the prioritised 30% enter the test), editable in the
+  dashboard.

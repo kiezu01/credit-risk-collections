@@ -45,8 +45,10 @@ most recent 30% (out-of-time).
 
 ### 3. Proving it in production
 Ranking well does not prove calling changes the outcome. To detect a **20% relative reduction
-in roll rate** (5.56% → 4.45%) on the prioritised accounts: **~6,000 accounts per arm, about a week**
-at 2,000 new DPD 5 entries a day. A 10% reduction needs ~25,000 per arm (about a month).
+in roll rate** (5.56% → 4.45%) on the prioritised accounts: **~6,000 accounts per arm, about three
+weeks**. Only the prioritised 30% of each day's queue enters the test, so at 2,000 new DPD 5
+entries a day, 600 accounts a day are eligible. A 10% reduction needs ~25,000 per arm (about
+three months).
 
 ### Honest caveats
 * The roll-rate model is somewhat optimistic in its riskiest decile (predicted 11% roll vs. 16%

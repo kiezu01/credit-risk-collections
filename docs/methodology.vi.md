@@ -49,6 +49,19 @@ Xếp hạng tốt không chứng minh được cuộc gọi làm thay đổi h�
 nghiệm ngẫu nhiên cần thiết để đo mức cải thiện: kiểm định z hai phía cho hai tỷ lệ, alpha 0,05,
 power 0,80.
 
+Đơn vị chia ngẫu nhiên là khoản **được ưu tiên**: mỗi ngày, 30% khoản mới vào DPD 5 có số tiền
+dự kiến roll cao nhất được chia ngẫu nhiên giữa chiến lược gọi mới và quy trình hiện tại. Roll rate
+nền (5,56%) được đo trên chính các khoản này. Chỉ 30% khối lượng mỗi ngày đủ điều kiện tham gia,
+nên thời gian chạy là `2 x số khoản mỗi nhóm / (số khoản mới mỗi ngày x 0,30)`: với 2.000 khoản
+mới mỗi ngày thì có 600 khoản đủ điều kiện.
+
+| Mức giảm tương đối cần phát hiện | Roll rate | Số khoản mỗi nhóm | Số ngày (600 khoản/ngày) |
+|---|---|---|---|
+| 30% | 5,56% → 3,89% | 2.539 | 9 |
+| 20% | 5,56% → 4,45% | 6.033 | 21 |
+| 15% | 5,56% → 4,73% | 11.008 | 37 |
+| 10% | 5,56% → 5,00% | 25.401 | 85 |
+
 ### Hạn chế
 * Các trường `DAYS_*` của Home Credit tính tương đối theo ngày nộp hồ sơ của từng khách hàng, không
   phải ngày theo lịch. Vì vậy "out-of-time" ở đây nghĩa là "gần với hồ sơ mới nhất của khách hàng
@@ -56,4 +69,5 @@ power 0,80.
 * Dữ liệu không ghi lại các hành động thu hồi nợ, nên không thể ước lượng tác động nhân quả thực sự
   của cuộc gọi. Đó chính là mục đích của A/B test.
 * Khối lượng mỗi ngày dùng để đổi cỡ mẫu ra thời gian chạy thử nghiệm là một giả định (2.000 khoản
-  quá hạn mới mỗi ngày), có thể chỉnh trong dashboard.
+  quá hạn mới mỗi ngày, trong đó 30% được ưu tiên đưa vào thử nghiệm), có thể chỉnh trong
+  dashboard.
