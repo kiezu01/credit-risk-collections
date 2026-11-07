@@ -52,41 +52,47 @@
   },
   "experiment": {
     "assumed_events_per_day": 2000,
+    "prioritised_share_in_test": 0.3,
     "design": [
       {
         "relative_reduction": 0.05,
         "baseline_roll_rate": 0.0556,
         "target_roll_rate": 0.0528,
         "events_per_arm": 104128,
-        "days_needed": 105
+        "eligible_per_day": 600,
+        "days_needed": 348
       },
       {
         "relative_reduction": 0.1,
         "baseline_roll_rate": 0.0556,
         "target_roll_rate": 0.05,
         "events_per_arm": 25401,
-        "days_needed": 26
+        "eligible_per_day": 600,
+        "days_needed": 85
       },
       {
         "relative_reduction": 0.15,
         "baseline_roll_rate": 0.0556,
         "target_roll_rate": 0.0473,
         "events_per_arm": 11008,
-        "days_needed": 12
+        "eligible_per_day": 600,
+        "days_needed": 37
       },
       {
         "relative_reduction": 0.2,
         "baseline_roll_rate": 0.0556,
         "target_roll_rate": 0.0445,
         "events_per_arm": 6033,
-        "days_needed": 7
+        "eligible_per_day": 600,
+        "days_needed": 21
       },
       {
         "relative_reduction": 0.3,
         "baseline_roll_rate": 0.0556,
         "target_roll_rate": 0.0389,
         "events_per_arm": 2539,
-        "days_needed": 3
+        "eligible_per_day": 600,
+        "days_needed": 9
       }
     ]
   }
