@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from sklearn.metrics import roc_curve
 
 from credit_risk_collections import metrics
 
@@ -8,6 +9,29 @@ def test_ks_is_one_for_perfect_separation():
     y = np.array([0, 0, 0, 1, 1, 1])
     s = np.array([0.1, 0.2, 0.3, 0.7, 0.8, 0.9])
     assert metrics.ks_statistic(y, s) == pytest.approx(1.0)
+
+
+def test_ks_is_zero_for_a_constant_score():
+    # a score that gives everyone the same value cannot separate anything
+    y = np.array([1, 1, 1, 1, 0, 0, 0, 0])
+    assert metrics.ks_statistic(y, np.zeros(8)) == pytest.approx(0.0)
+
+
+def test_ks_matches_roc_curve_on_discrete_scores():
+    # scorecard points are discrete: KS must only be read at distinct scores,
+    # which is what max(TPR - FPR) over sklearn's ROC thresholds does
+    rng = np.random.default_rng(3)
+    y = rng.integers(0, 2, 20_000)
+    s = np.round(0.3 * y + rng.normal(0, 1, 20_000))
+    fpr, tpr, _ = roc_curve(y, s)
+    assert metrics.ks_statistic(y, s) == pytest.approx(np.max(tpr - fpr))
+
+
+def test_ks_does_not_depend_on_row_order_within_ties():
+    y = np.array([0, 1, 0, 1, 1, 0])
+    s = np.array([1, 1, 2, 2, 3, 3])
+    perm = np.array([1, 0, 3, 2, 5, 4])
+    assert metrics.ks_statistic(y, s) == pytest.approx(metrics.ks_statistic(y[perm], s[perm]))
 
 
 def test_gini_matches_auc():
