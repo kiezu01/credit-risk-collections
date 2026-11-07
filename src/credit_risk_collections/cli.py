@@ -22,6 +22,8 @@ from .config import ROOT, get_paths
 # Daily volume of new DPD 5 entries, used to turn A/B sample sizes into a test duration.
 # Home Credit has no calendar dates, so this is an assumption: use the real portfolio's volume.
 EVENTS_PER_DAY = 2000
+# Share of each day's queue that collectors work, and that the A/B test randomises.
+PRIORITISED_SHARE = 0.3
 
 
 def build() -> None:
@@ -52,12 +54,22 @@ def train() -> dict:
     print("[4/4] A/B test design + reports ...", flush=True)
     worked = col.oot_scored.assign(
         rank=(1 - col.oot_scored["p_cure"]) * col.oot_scored["shortfall_amt"]
-    ).nlargest(int(0.3 * len(col.oot_scored)), "rank")
-    # baseline = roll rate of the accounts the model would put in front of collectors
-    exp_table = experiment.design_table(1 - float(worked["is_cured"].mean()), EVENTS_PER_DAY)
+    ).nlargest(int(PRIORITISED_SHARE * len(col.oot_scored)), "rank")
+    # baseline = roll rate of the accounts the model would put in front of collectors;
+    # only those accounts enter the test, so only that share of daily volume is eligible
+    exp_table = experiment.design_table(
+        1 - float(worked["is_cured"].mean()), EVENTS_PER_DAY, eligible_share=PRIORITISED_SHARE
+    )
 
     results = reporting.write_all(
-        paths, sc, ch, col, exp_table, collections_model.STRATEGIES, EVENTS_PER_DAY
+        paths,
+        sc,
+        ch,
+        col,
+        exp_table,
+        collections_model.STRATEGIES,
+        EVENTS_PER_DAY,
+        PRIORITISED_SHARE,
     )
     print(json.dumps(results, indent=2, default=float))
     return results

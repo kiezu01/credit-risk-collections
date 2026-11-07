@@ -30,10 +30,31 @@ def sample_size_per_arm(
     return math.ceil(numerator / (p_control - p_treatment) ** 2)
 
 
+def days_needed(events_per_arm: int, events_per_day: float, eligible_share: float = 1.0):
+    """Days to enrol both arms when only ``eligible_share`` of daily entries can join."""
+    eligible_per_day = events_per_day * eligible_share
+    if eligible_per_day <= 0:
+        return None
+    return math.ceil(2 * events_per_arm / eligible_per_day)
+
+
 def design_table(
-    baseline_roll_rate: float, events_per_day: float, alpha: float = 0.05, power: float = 0.8
+    baseline_roll_rate: float,
+    events_per_day: float,
+    eligible_share: float = 1.0,
+    alpha: float = 0.05,
+    power: float = 0.8,
 ) -> pd.DataFrame:
-    """Sample size and duration to detect a relative reduction in the roll rate."""
+    """Sample size and duration to detect a relative reduction in the roll rate.
+
+    ``events_per_day`` is the daily number of new DPD 5 entries. The test only
+    randomises the accounts that would be prioritised (the top
+    ``eligible_share`` of each day's queue), and the baseline roll rate is
+    measured on those same accounts, so only that share of the daily volume
+    counts towards the sample.
+    """
+    if not 0 < eligible_share <= 1:
+        raise ValueError("eligible_share must be in (0, 1]")
     rows = []
     for cut in RELATIVE_REDUCTIONS:
         target = baseline_roll_rate * (1 - cut)
@@ -44,7 +65,8 @@ def design_table(
                 "baseline_roll_rate": round(baseline_roll_rate, 4),
                 "target_roll_rate": round(target, 4),
                 "events_per_arm": n,
-                "days_needed": math.ceil(2 * n / events_per_day) if events_per_day else None,
+                "eligible_per_day": round(events_per_day * eligible_share),
+                "days_needed": days_needed(n, events_per_day, eligible_share),
             }
         )
     return pd.DataFrame(rows)
