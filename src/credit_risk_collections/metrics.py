@@ -13,14 +13,24 @@ def gini(y_true, y_score) -> float:
 
 
 def ks_statistic(y_true, y_score) -> float:
-    """Max distance between the score CDFs of bads (y=1) and goods (y=0)."""
-    y_true = np.asarray(y_true)
-    y_score = np.asarray(y_score)
-    order = np.argsort(y_score)
+    """Max distance between the score CDFs of bads (y=1) and goods (y=0).
+
+    The CDFs are only compared at distinct score values. Scorecard points are
+    discrete, so many customers share a score; a cut-off cannot split a group
+    of equal scores, and evaluating the CDFs inside such a group (as a plain
+    cumulative sum over sorted rows does) overstates KS. A constant score
+    must have KS = 0.
+    """
+    y_true = np.asarray(y_true, dtype=float)
+    y_score = np.asarray(y_score, dtype=float)
+    order = np.argsort(y_score, kind="stable")
+    s_sorted = y_score[order]
     y_sorted = y_true[order]
     cum_bad = np.cumsum(y_sorted) / max(y_sorted.sum(), 1)
     cum_good = np.cumsum(1 - y_sorted) / max((1 - y_sorted).sum(), 1)
-    return float(np.max(np.abs(cum_bad - cum_good)))
+    # last row of each run of equal scores = a cut-off that can actually be used
+    is_last_of_tie = np.r_[s_sorted[1:] != s_sorted[:-1], True]
+    return float(np.max(np.abs(cum_bad[is_last_of_tie] - cum_good[is_last_of_tie])))
 
 
 def psi(expected, actual, bins: int = 10) -> float:
