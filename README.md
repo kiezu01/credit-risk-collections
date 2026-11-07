@@ -1,5 +1,7 @@
 # Credit Risk & Collections Analytics
 
+**English** · [Tiếng Việt](README.vi.md)
+
 **Who should we lend to, and when a payment is missed, who should we call first?**
 
 An end-to-end consumer-credit analytics project on the real
@@ -91,6 +93,8 @@ uv sync
 uv run crc all                                      # build warehouse (~2 min) + train
 uv run python -m streamlit run app/streamlit_app.py # dashboard
 ```
+
+Data in another folder? Set `CRC_RAW_DIR=path/to/folder`.
 
 No Kaggle account? `uv run crc sample` writes a small synthetic dataset with the same schema;
 point the pipeline at it with `CRC_RAW_DIR=data/sample`. The test suite does exactly this:
