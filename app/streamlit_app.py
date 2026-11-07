@@ -7,7 +7,6 @@ English by default; add ?lang=vi to the URL (or use the switch) for Vietnamese.
 from __future__ import annotations
 
 import json
-import math
 import os
 import sys
 from pathlib import Path
@@ -19,7 +18,7 @@ import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from credit_risk_collections.experiment import sample_size_per_arm  # noqa: E402
+from credit_risk_collections.experiment import days_needed, sample_size_per_arm  # noqa: E402
 
 REPORTS = Path(os.environ.get("CRC_REPORTS_DIR", ROOT / "reports"))
 DATA = REPORTS / "app_data"
@@ -373,6 +372,18 @@ with tab_ab:
     per_day = c.number_input(
         t("New DPD 5 entries per day", "Số khoản mới vào DPD 5 mỗi ngày"), 100, 100_000, 2000, 100
     )
+    share_default = float(results()["experiment"].get("prioritised_share_in_test", 0.3))
+    share = c.number_input(
+        t(
+            "Share of the queue that is prioritised (and enters the test)",
+            "Tỷ lệ hàng đợi được ưu tiên (và đưa vào thử nghiệm)",
+        ),
+        0.05,
+        1.0,
+        share_default,
+        0.05,
+        format="%.2f",
+    )
     n = sample_size_per_arm(baseline, baseline * (1 - cut))
     a2, b2, c2 = st.columns(3)
     a2.metric(
@@ -382,17 +393,28 @@ with tab_ab:
         delta_color="off",
     )
     b2.metric(t("Total accounts", "Tổng số khoản"), f"{2 * n:,}")
-    c2.metric(t("Days to run", "Số ngày chạy"), f"{math.ceil(2 * n / per_day)}")
+    c2.metric(
+        t("Days to run", "Số ngày chạy"),
+        f"{days_needed(n, per_day, share)}",
+        t(
+            f"{per_day * share:,.0f} eligible accounts a day",
+            f"{per_day * share:,.0f} khoản đủ điều kiện mỗi ngày",
+        ),
+        delta_color="off",
+    )
     st.dataframe(design, hide_index=True, use_container_width=True)
     st.caption(
         t(
             "Two-sided z-test on two proportions, alpha 0.05, power 0.80. Baseline defaults to the "
             "roll rate of the accounts the model would put in front of collectors (top 30% by "
-            "expected rolling amount). Daily volume is an assumption: replace it with your "
-            "portfolio's.",
+            "expected rolling amount). Only that prioritised share of each day's entries is "
+            "randomised, so the duration is based on it, not on all new DPD 5 entries. Daily "
+            "volume is an assumption: replace it with your portfolio's.",
             "Kiểm định z hai phía cho hai tỷ lệ, alpha 0,05, power 0,80. Giá trị nền mặc định là "
             "roll rate của các khoản mô hình sẽ đưa cho nhân viên thu hồi (30% đầu theo số tiền "
-            "dự kiến roll). Khối lượng mỗi ngày là giả định: thay bằng số liệu danh mục thực tế.",
+            "dự kiến roll). Chỉ phần được ưu tiên đó của mỗi ngày mới được chia ngẫu nhiên, nên "
+            "số ngày chạy tính theo phần này chứ không theo toàn bộ khoản mới vào DPD 5. Khối "
+            "lượng mỗi ngày là giả định: thay bằng số liệu danh mục thực tế.",
         )
     )
 
