@@ -119,7 +119,14 @@ def calibration_figure(cal: pd.DataFrame, path):
 
 
 def write_all(
-    paths: Paths, sc, ch, col, exp_table: pd.DataFrame, labels: dict, events_per_day: int
+    paths: Paths,
+    sc,
+    ch,
+    col,
+    exp_table: pd.DataFrame,
+    labels: dict,
+    events_per_day: int,
+    prioritised_share: float,
 ) -> dict:
     paths.figures.mkdir(parents=True, exist_ok=True)
     paths.app_data.mkdir(parents=True, exist_ok=True)
@@ -158,6 +165,7 @@ def write_all(
         "collections": col.metrics,
         "experiment": {
             "assumed_events_per_day": events_per_day,
+            "prioritised_share_in_test": prioritised_share,
             "design": exp_table.to_dict(orient="records"),
         },
     }
